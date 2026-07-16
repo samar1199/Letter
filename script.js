@@ -1,45 +1,88 @@
-const heartContainer = document.querySelector('.hearts');
-const card = document.querySelector('.card');
+const heartsContainer = document.querySelector(".hearts");
+
+let score = 0;
+let target = 20;
 
 function createHeart() {
-  const heart = document.createElement('div');
-  heart.className = 'heart';
-  heart.innerHTML = '💖';
-  heart.style.left = `${Math.random() * 100}vw`;
-  heart.style.top = '110vh';
-  heart.style.fontSize = `${16 + Math.random() * 20}px`;
-  heart.style.animationDuration = `${6 + Math.random() * 4}s`;
-  heart.style.animationDelay = `${Math.random() * 2}s`;
-  heartContainer.appendChild(heart);
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
 
-  setTimeout(() => heart.remove(), 10000);
-}
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.fontSize = (20 + Math.random() * 30) + "px";
+    heart.style.animationDuration = (5 + Math.random() * 5) + "s";
 
-function createSparkle() {
-  const sparkle = document.createElement('div');
-  sparkle.className = 'sparkle';
-  sparkle.innerHTML = '✦';
-  sparkle.style.left = `${Math.random() * 100}vw`;
-  sparkle.style.top = '110vh';
-  sparkle.style.fontSize = `${10 + Math.random() * 12}px`;
-  sparkle.style.animationDuration = `${4 + Math.random() * 3}s`;
-  sparkle.style.animationDelay = `${Math.random() * 2}s`;
-  heartContainer.appendChild(sparkle);
+    heart.onclick = function () {
+        score++;
+        document.getElementById("score").innerText = score;
 
-  setTimeout(() => sparkle.remove(), 8000);
+        heart.remove();
+
+        if (score >= target) {
+            unlockLetter();
+        }
+    };
+
+    heartsContainer.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 10000);
 }
 
 setInterval(createHeart, 500);
-setInterval(createSparkle, 300);
 
-setTimeout(() => card.classList.add('is-visible'), 250);
+function unlockLetter() {
 
-window.addEventListener('pointermove', (event) => {
-  const x = event.clientX / window.innerWidth;
-  const y = event.clientY / window.innerHeight;
-  card.style.transform = `translateY(${(y - 0.5) * 4}px) rotateX(${(y - 0.5) * 2}deg) rotateY(${(x - 0.5) * 2}deg)`;
-});
+    document.getElementById("message").style.display = "block";
 
-window.addEventListener('pointerleave', () => {
-  card.style.transform = '';
-});
+    launchConfetti();
+}
+
+function launchConfetti() {
+
+    for(let i=0;i<150;i++){
+
+        const confetti=document.createElement("div");
+
+        confetti.innerHTML="💖";
+
+        confetti.style.position="fixed";
+
+        confetti.style.left=Math.random()*100+"vw";
+
+        confetti.style.top="-20px";
+
+        confetti.style.fontSize=(10+Math.random()*25)+"px";
+
+        confetti.style.transition="4s linear";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+
+            confetti.style.top="110vh";
+
+            confetti.style.transform=`rotate(${Math.random()*720}deg)`;
+
+        },100);
+
+        setTimeout(()=>{
+
+            confetti.remove();
+
+        },5000);
+
+    }
+
+}
+
+const progress=document.getElementById("progress");
+
+setInterval(()=>{
+
+    let percent=(score/target)*100;
+
+    progress.style.width=percent+"%";
+
+},100);
